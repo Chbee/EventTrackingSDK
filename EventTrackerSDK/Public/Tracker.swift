@@ -12,22 +12,33 @@ public final class Tracker {
     
     private init() {}
     
+    private var dispatcher: EventDispatcher?
     private var isInitialized: Bool = false
     
     public func initialize() {
         /*
          필요 설정 등록
          */
+        let directory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+        let fileURL = directory.appendingPathComponent("tracked_events.json")
+        
+        let store = FileEventStore(fileURL: fileURL)
+        let flushPolicy = FlushPolicy(maxBatchSize: 5, flushInterval: 5)
+        
+        dispatcher = EventDispatcher(store: store, flushPolicy: flushPolicy)
         isInitialized = true
     }
     
-    public func log(event: String, properties: [String:Any]? = nil) {
+    public func log(event: String, properties: [String:String] = [:]) {
         guard isInitialized else {
             assertionFailure("[WARNING] SDK가 초기화되지 않았습니다.")
             return
         }
         
-        // 실제 이벤트 수집 시작
+        dispatcher?.log(name: event, properties: properties)
+    }
+    
+    public func sendStoredEvents() {
+        dispatcher?.flush()
     }
 }
-
