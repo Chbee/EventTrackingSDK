@@ -7,7 +7,7 @@
 
 import Foundation
 
-internal struct TrackedEvent: Codable, Equatable {
+struct TrackedEvent: Codable, Equatable {
     let eventID: String
     let name: String
     let properties: [String:String]
