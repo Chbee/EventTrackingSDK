@@ -23,9 +23,10 @@ public final class Tracker {
         let fileURL = directory.appendingPathComponent("tracked_events.json")
         
         let store = FileEventStore(fileURL: fileURL)
+        let sender = MockEventSender()
         let flushPolicy = FlushPolicy(maxBatchSize: 5, flushInterval: 5)
         
-        dispatcher = EventDispatcher(store: store, flushPolicy: flushPolicy)
+        dispatcher = EventDispatcher(store: store, sender: sender, flushPolicy: flushPolicy)
         isInitialized = true
     }
     
